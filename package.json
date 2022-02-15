@@ -1,0 +1,28 @@
+{
+  "name": "Chain-Reaction-ServerApp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "dev": "nodemon app.js",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PrasannaPanneerSelvam/Chain-Reaction-ServerApp.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PrasannaPanneerSelvam/Chain-Reaction-ServerApp/issues"
+  },
+  "homepage": "https://github.com/PrasannaPanneerSelvam/Chain-Reaction-ServerApp#readme",
+  "dependencies": {
+    "express": "^4.17.2",
+    "socket.io": "^4.4.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
