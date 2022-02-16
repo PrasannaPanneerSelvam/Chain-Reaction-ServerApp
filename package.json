@@ -20,6 +20,7 @@
   "homepage": "https://github.com/PrasannaPanneerSelvam/Chain-Reaction-ServerApp#readme",
   "dependencies": {
     "express": "^4.17.2",
+    "get-random-values": "^1.2.2",
     "socket.io": "^4.4.1"
   },
   "devDependencies": {

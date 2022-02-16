@@ -8,8 +8,15 @@ function addSocketEvents(socket, io) {
   });
 
   socket.on('join-room', (roomId, jwt) => {
-    const result = joinRoom(roomId, jwt);
-    socket.emit('gameDetails', result);
+    let result = null;
+    try {
+      result = joinRoom(roomId, jwt);
+    } catch (e) {
+      // TODO :: Make the error message more specific to content
+      result = 'Unable to find room id';
+    } finally {
+      socket.emit('gameDetails', result);
+    }
   });
 
   /************** Game events **************/
