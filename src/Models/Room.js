@@ -37,8 +37,21 @@ class Room {
     return this.__currentClientsCount;
   }
 
+  // TODO :: Convert 2d matrix values to 1d array
+  getBoardValues() {
+
+  }
+
   // TODO :: Implement this to show player details & game board
-  getRoomDetails() {}
+  getRoomDetails(roomId) {
+    return {
+      roomId,
+      noOfPlayers: this.__maxNumberOfPlayers,
+      players: this.players.map(player => player.getPlayerDetails()),
+      board: this.getBoardValues(),
+      noOfWatchers: this.watchers.length,
+    }
+  }
 }
 
 module.exports = Room;

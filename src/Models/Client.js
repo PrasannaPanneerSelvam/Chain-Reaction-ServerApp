@@ -8,6 +8,12 @@ class Client {
   setClientType(isPlayer) {
     this.isPlayer = isPlayer === true;
   }
+
+  getPlayerDetails() {
+    return {
+      playerNumber: this.playerNumber,
+    }
+  }
 }
 
 module.exports = Client;

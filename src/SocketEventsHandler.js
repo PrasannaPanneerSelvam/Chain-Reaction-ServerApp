@@ -6,7 +6,8 @@ function addSocketEvents(socket, io) {
     let result = null;
     try {
       result = createAndJoinNewRoom(noOfPlayers);
-      setRoomEvents(socket, result.roomId);
+      socket.join(result.roomDetails.roomId);
+      setRoomEvents(socket, result.roomDetails.roomId);
       socket.emit('gameDetails', result);
     } catch (e) {
       // TODO :: Make the error message more specific to content
@@ -17,8 +18,11 @@ function addSocketEvents(socket, io) {
   socket.on('join-room', (roomId, jwt) => {
     let result = null;
     try {
-      result = joinRoom(roomId, jwt);
-      setRoomEvents(socket, result.roomId);
+      result = joinRoom(roomId, jwt, (roomId, client) =>
+        socket.to(roomId).emit('player', client)
+      );
+      socket.join(result.roomDetails.roomId);
+      setRoomEvents(socket, result.roomDetails.roomId);
       socket.emit('gameDetails', result);
     } catch (e) {
       // TODO :: Make the error message more specific to content

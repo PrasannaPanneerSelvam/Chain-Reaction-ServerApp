@@ -15,16 +15,18 @@ function createRoom(noOfPlayers) {
 }
 
 // jwtToken - To handle player rejoin in case of app close or network issues
-function joinRoom(roomId, jwtToken = null) {
+function joinRoom(roomId, jwtToken = null, joinAnnouncement) {
   const room = RoomMap[roomId],
     playerId = room.getNextIndex(),
     newClient = new Client(playerId, jwtToken);
 
   const isPlayer = room.addClient(newClient);
   newClient.setClientType(isPlayer);
+
+  joinAnnouncement && joinAnnouncement(newClient);
+
   return {
-    roomDetails: room.getRoomDetails(),
-    roomId,
+    roomDetails: room.getRoomDetails(roomId),
     playerId,
     isPlayer,
   };
