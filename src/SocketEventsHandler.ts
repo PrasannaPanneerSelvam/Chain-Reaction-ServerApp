@@ -1,6 +1,9 @@
-const { createAndJoinNewRoom, joinRoom } = require('./RoomHandler');
+import { Socket, Server } from 'socket.io';
 
-function addSocketEvents(socket, io) {
+import { PlayerDetails } from './Models';
+import { createAndJoinNewRoom, joinRoom } from './RoomHandler';
+
+function addSocketEvents(socket: Socket, io: Server): void {
   /************** Room entry events **************/
   socket.on('create-room', (noOfPlayers = 4) => {
     let result = null;
@@ -15,10 +18,10 @@ function addSocketEvents(socket, io) {
     }
   });
 
-  socket.on('join-room', (roomId, jwt) => {
+  socket.on('join-room', (roomId: string, jwt: string) => {
     let result = null;
     try {
-      result = joinRoom(roomId, jwt, (roomId, client) =>
+      result = joinRoom(roomId, jwt, (roomId: string, client: PlayerDetails) =>
         socket.to(roomId).emit('player', client)
       );
       socket.join(result.roomDetails.roomId);
@@ -31,11 +34,11 @@ function addSocketEvents(socket, io) {
   });
 }
 
-function setRoomEvents(socket, roomId) {
+function setRoomEvents(socket: Socket, roomId: string): void {
   /************** Game events **************/
-  socket.on('m', message => {
+  socket.on('m', (message: number) => {
     socket.to(roomId).emit('m', message);
   });
 }
 
-module.exports = addSocketEvents;
+export default addSocketEvents;
