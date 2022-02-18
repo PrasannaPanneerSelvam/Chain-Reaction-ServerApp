@@ -1,4 +1,6 @@
 import GameClient, { PlayerDetails } from './GameClient';
+import ChainReaction, { FeedbackCallbacks } from './GameEngine';
+import PlayerRotation from './PlayerRotationUtils';
 
 interface RoomDetails {
   roomId: string;
@@ -13,7 +15,8 @@ class Room {
 
   private maxNumberOfPlayers: number;
   private currentClientsCount: number;
-  private validationBoard: null;
+  private validationBoard: ChainReaction;
+  private playerRotation: PlayerRotation;
 
   players: GameClient[];
   watchers: GameClient[];
@@ -28,7 +31,8 @@ class Room {
     this.currentClientsCount = 0;
 
     // TODO :: Add server validation functionality
-    this.validationBoard = null;
+    this.validationBoard = new ChainReaction(8, 8, noOfPlayers);
+    this.playerRotation = new PlayerRotation(noOfPlayers);
   }
 
   addClient(newClient: GameClient): boolean {
@@ -52,9 +56,20 @@ class Room {
     return this.currentClientsCount;
   }
 
-  // TODO :: Convert 2d matrix values to 1d array
+  /********************* Converting 2d matrix values to 1d array ***************************/
   getBoardValues(): number[] {
-    return [];
+    const board = this.validationBoard.getBoard(),
+      result: number[] = [];
+
+    for (let row = 0, idx = 0; row < board.length; row++) {
+      for (let col = 0; col < board[0].length; col++, idx++) {
+        const value = board[row][col].value,
+          color = board[row][col].color;
+        result.push(value === 0 ? 0 : color * 10 + value);
+      }
+    }
+
+    return result;
   }
 
   // TODO :: Implement this to show player details & game board
@@ -66,6 +81,38 @@ class Room {
       board: this.getBoardValues(),
       noOfWatchers: this.watchers.length,
     };
+  }
+
+  validateMove(
+    playerId: number,
+    move: number,
+    callBackObject: FeedbackCallbacks
+  ): boolean {
+    const row = Math.floor(move / 8),
+      col = move % 8;
+
+    if (this.playerRotation.getCurrentPlayer() !== playerId) {
+      return false;
+    }
+
+    const playerOutCb = callBackObject.playerOut;
+    callBackObject.playerOut = (playerId: number) => {
+      this.playerRotation.removePlayer(playerId);
+      playerOutCb(playerId);
+    };
+
+    const isValidMove = this.validationBoard.addNucleus(
+      row,
+      col,
+      playerId,
+      callBackObject
+    );
+
+    if (isValidMove) {
+      this.playerRotation.updateNextPlayer();
+    }
+
+    return isValidMove;
   }
 }
 

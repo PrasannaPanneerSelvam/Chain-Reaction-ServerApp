@@ -25,7 +25,7 @@ function joinRoom(
   roomId: string,
   jwtToken?: null | string,
   joinAnnouncement?: (roomId: string, client: PlayerDetails) => void
-): PlayerRoomReponse {
+): [Room, PlayerRoomReponse] {
   const room: any = RoomMap[roomId],
     playerId: number = room.getNextIndex(),
     newClient: GameClient = new GameClient(playerId, jwtToken);
@@ -35,16 +35,19 @@ function joinRoom(
 
   joinAnnouncement && joinAnnouncement(roomId, newClient.getPlayerDetails());
 
-  return {
-    roomDetails: room.getRoomDetails(roomId),
-    playerId,
-    isPlayer,
-  };
+  return [
+    room,
+    {
+      roomDetails: room.getRoomDetails(roomId),
+      playerId,
+      isPlayer,
+    },
+  ];
 }
 
-function createAndJoinNewRoom(noOfPlayers: number): PlayerRoomReponse {
+function createAndJoinNewRoom(noOfPlayers: number): [Room, PlayerRoomReponse] {
   const newRoomId = createRoom(noOfPlayers);
   return joinRoom(newRoomId, null);
 }
 
-export { createAndJoinNewRoom, joinRoom };
+export { PlayerRoomReponse, createAndJoinNewRoom, joinRoom };
